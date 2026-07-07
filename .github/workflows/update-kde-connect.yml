@@ -17,7 +17,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Check out tap
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Expose checkout as Homebrew tap
         run: |
