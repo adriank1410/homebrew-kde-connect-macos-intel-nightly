@@ -1,28 +1,49 @@
-# KDE Connect nightly dla Homebrew na Intel Macu
+# KDE Connect Intel Nightly Homebrew Tap
 
-Wniosek z walidacji z 2026-07-07: mechanika lokalnego caska ma sens. Aktualny Intel nightly build `6325` z katalogu KDE został pobrany, sprawdzony po SHA-256, zamontowany przez `hdiutil`, a binarka `kdeconnect-cli` została potwierdzona jako `x86_64`.
+Homebrew tap for the official KDE Connect macOS Intel nightly builds.
 
-Ten katalog zawiera bezpieczny updater: najpierw regexem wykrywa najnowszy build z listingu KDE i porównuje go z wersją w lokalnym casku. Jeśli build nie jest nowszy, kończy pracę bez pobierania DMG. Jeśli jest nowszy, pobiera artifact i aktualizuje cask dopiero po sprawdzeniu SHA-256, montowalności obrazu oraz architektury binarki.
+The upstream Homebrew Cask currently packages the stable macOS build of KDE
+Connect, which is ARM-only. KDE also publishes untested nightly builds for Intel
+macOS. This tap exists to make those Intel nightly builds installable through a
+normal Homebrew tap while keeping update checks conservative.
 
-## Proponowany przepływ z GitHuba
+This project is not affiliated with KDE or Homebrew.
 
-Tap może być utrzymywany w repozytorium GitHub `adriank1410/homebrew-kde-nightly`. Workflow `.github/workflows/update-kde-connect.yml` uruchamia się codziennie oraz ręcznie. Robi to samo, co lokalny updater:
+## Motivation
 
-- regexem odczytuje najnowszy Intel build z katalogu KDE,
-- porównuje go z wersją w `Casks/kde-connect.rb`,
-- jeśli build jest nowszy, pobiera DMG, liczy SHA-256, montuje obraz, sprawdza `x86_64`,
-- aktualizuje cask, uruchamia `brew style`, `brew audit` i `brew livecheck`,
-- commitnie zmianę tylko wtedy, gdy cask faktycznie się zmienił.
+KDE Connect publishes:
 
-Lokalnie zostaje normalny przepływ Brew:
+- a stable macOS release for Apple Silicon,
+- nightly macOS builds for Apple Silicon,
+- nightly macOS builds for Intel.
+
+The stable Intel URL for the current KDE Connect macOS release does not exist,
+so the official Homebrew Cask cannot safely add an Intel variant until KDE
+publishes a stable Intel artifact. This tap tracks the Intel nightly channel
+instead.
+
+## Install
 
 ```bash
 brew tap adriank1410/kde-nightly
+brew install --cask adriank1410/kde-nightly/kde-connect
+```
+
+If your Homebrew configuration requires explicit tap trust:
+
+```bash
+brew trust --cask adriank1410/kde-nightly/kde-connect
+```
+
+## Update
+
+```bash
 brew update
 brew upgrade --cask adriank1410/kde-nightly/kde-connect
 ```
 
-Jeśli zainstalowany build jest przypięty, trzeba go raz odpiąć przed aktualizacją:
+If you keep the cask pinned locally, unpin before upgrading and pin it again
+afterwards:
 
 ```bash
 brew unpin kde-connect
@@ -30,25 +51,50 @@ brew upgrade --cask adriank1410/kde-nightly/kde-connect
 brew pin kde-connect
 ```
 
-Jeśli Homebrew poprosi o zaufanie dla lokalnego caska:
+## How Updates Work
 
-```bash
-brew trust --cask adriank1410/kde-nightly/kde-connect
-```
+The scheduled GitHub Actions workflow runs on a macOS runner and:
 
-Na tej maszynie trust dla `adriank1410/kde-nightly/kde-connect` został już ustawiony.
+1. Reads the KDE Connect Intel nightly directory.
+2. Extracts the newest build number with a regex.
+3. Compares that build number with `Casks/kde-connect.rb`.
+4. Exits without downloading anything when the cask is already current.
+5. Downloads the DMG only when KDE publishes a newer build.
+6. Verifies the downloaded byte size and computes SHA-256.
+7. Checks that `hdiutil` can read and mount the DMG.
+8. Checks that `KDE Connect.app/Contents/MacOS/kdeconnect-cli` contains
+   `x86_64`.
+9. Regenerates the cask with the new version and SHA-256.
+10. Runs `brew style`, `brew audit`, and `brew livecheck`.
+11. Commits the cask update only after validation passes.
 
-## Lokalny fallback
+The workflow runs daily and can also be started manually from GitHub Actions.
 
-Ten sam updater nadal można uruchomić ręcznie, np. do debugowania:
+## Why Not Only `livecheck`?
 
-```bash
-/Users/adriank1410/Documents/Codex/2026-07-07/new-chat/outputs/kde-connect-homebrew-nightly/update-kde-connect-cask.zsh \
-  "$(brew --repository adriank1410/kde-nightly)"
-```
+Homebrew `livecheck` can detect that a newer upstream build exists, but
+`brew upgrade` does not rewrite cask files or compute new checksums. A cask
+update still has to be committed to the tap first. This repository automates
+that commit step.
 
-## Dlaczego nie sam `livecheck`
+## Public Tap Safety Notes
 
-`brew livecheck` potrafi wykryć nowy numer builda z listingu KDE, ale samo `brew upgrade` nie aktualizuje pliku caska na podstawie `livecheck`. Cask ma statyczne `version`, `url` i `sha256`; trzeba go najpierw zbumpować w lokalnym tapie. Ten skrypt robi bump tylko wtedy, gdy regex z katalogu KDE pokaże build nowszy niż wpisany w lokalnym casku.
+The repository is public so other Intel Mac users can use the tap without
+personal access tokens.
 
-Minimalna wersja macOS w casku to `:ventura`, bo audyt Homebrew odczytał takie minimum z rozpakowanego artifactu. Cask ogranicza też architekturę do `x86_64`, co zostało zweryfikowane lokalnie.
+The update workflow is intentionally narrow:
+
+- it does not run on pull requests,
+- it uses no repository secrets,
+- it uses the default `GITHUB_TOKEN` only to commit validated cask updates,
+- it writes only `Casks/kde-connect.rb`,
+- it validates the macOS DMG on a macOS runner before committing.
+
+## Limitations
+
+KDE labels the nightly builds as untested. This tap validates that the published
+DMG is mountable and contains an Intel binary, but it cannot guarantee runtime
+stability of KDE Connect itself.
+
+When KDE publishes a stable Intel macOS build, the better long-term solution is
+to update the official `homebrew/cask` `kde-connect` cask.
