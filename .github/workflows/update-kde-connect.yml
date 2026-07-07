@@ -23,7 +23,7 @@ jobs:
         run: |
           set -euo pipefail
           tap_root="$(brew --repository)/Library/Taps/adriank1410"
-          tap_link="$tap_root/homebrew-kde-nightly"
+          tap_link="$tap_root/homebrew-kde-connect-macos-intel-nightly"
           mkdir -p "$tap_root"
           if [[ -e "$tap_link" && ! -L "$tap_link" ]]; then
             echo "::error::Homebrew tap path already exists and is not a symlink: $tap_link"
@@ -51,9 +51,9 @@ jobs:
         if: steps.diff.outputs.updated == 'true'
         run: |
           set -euo pipefail
-          HOMEBREW_NO_INSTALL_FROM_API=1 brew style --cask adriank1410/kde-nightly/kde-connect
-          HOMEBREW_NO_INSTALL_FROM_API=1 brew audit --cask --new --strict adriank1410/kde-nightly/kde-connect
-          HOMEBREW_NO_INSTALL_FROM_API=1 brew livecheck --cask adriank1410/kde-nightly/kde-connect --json
+          HOMEBREW_NO_INSTALL_FROM_API=1 brew style --cask adriank1410/kde-connect-macos-intel-nightly/kde-connect
+          HOMEBREW_NO_INSTALL_FROM_API=1 brew audit --cask --new --strict adriank1410/kde-connect-macos-intel-nightly/kde-connect
+          HOMEBREW_NO_INSTALL_FROM_API=1 brew livecheck --cask adriank1410/kde-connect-macos-intel-nightly/kde-connect --json
 
       - name: Commit update
         if: steps.diff.outputs.updated == 'true'

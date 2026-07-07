@@ -28,21 +28,21 @@ channel instead.
 ## Install
 
 ```bash
-brew tap adriank1410/kde-nightly
-brew install --cask adriank1410/kde-nightly/kde-connect
+brew tap adriank1410/kde-connect-macos-intel-nightly
+brew install --cask adriank1410/kde-connect-macos-intel-nightly/kde-connect
 ```
 
 If your Homebrew configuration requires explicit tap trust:
 
 ```bash
-brew trust --cask adriank1410/kde-nightly/kde-connect
+brew trust --cask adriank1410/kde-connect-macos-intel-nightly/kde-connect
 ```
 
 ## Update
 
 ```bash
 brew update
-brew upgrade --cask adriank1410/kde-nightly/kde-connect
+brew upgrade --cask adriank1410/kde-connect-macos-intel-nightly/kde-connect
 ```
 
 If you keep the cask pinned locally, unpin before upgrading and pin it again
@@ -50,7 +50,7 @@ afterwards:
 
 ```bash
 brew unpin kde-connect
-brew upgrade --cask adriank1410/kde-nightly/kde-connect
+brew upgrade --cask adriank1410/kde-connect-macos-intel-nightly/kde-connect
 brew pin kde-connect
 ```
 
