@@ -1,0 +1,67 @@
+name: Update KDE Connect nightly
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 4 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kde-connect-nightly-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: macos-latest
+    steps:
+      - name: Check out tap
+        uses: actions/checkout@v4
+
+      - name: Expose checkout as Homebrew tap
+        run: |
+          set -euo pipefail
+          tap_root="$(brew --repository)/Library/Taps/adriank1410"
+          tap_link="$tap_root/homebrew-kde-nightly"
+          mkdir -p "$tap_root"
+          if [[ -e "$tap_link" && ! -L "$tap_link" ]]; then
+            echo "::error::Homebrew tap path already exists and is not a symlink: $tap_link"
+            exit 1
+          fi
+          ln -sfn "$GITHUB_WORKSPACE" "$tap_link"
+
+      - name: Update cask from KDE nightly
+        id: update
+        run: ./update-kde-connect-cask.zsh "$GITHUB_WORKSPACE"
+
+      - name: Detect cask change
+        id: diff
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- Casks/kde-connect.rb; then
+            echo "updated=false" >> "$GITHUB_OUTPUT"
+            echo "No cask update detected."
+          else
+            echo "updated=true" >> "$GITHUB_OUTPUT"
+            echo "Cask update detected."
+          fi
+
+      - name: Validate cask
+        if: steps.diff.outputs.updated == 'true'
+        run: |
+          set -euo pipefail
+          HOMEBREW_NO_INSTALL_FROM_API=1 brew style --cask adriank1410/kde-nightly/kde-connect
+          HOMEBREW_NO_INSTALL_FROM_API=1 brew audit --cask --new --strict adriank1410/kde-nightly/kde-connect
+          HOMEBREW_NO_INSTALL_FROM_API=1 brew livecheck --cask adriank1410/kde-nightly/kde-connect --json
+
+      - name: Commit update
+        if: steps.diff.outputs.updated == 'true'
+        run: |
+          set -euo pipefail
+          version="$(sed -n -E 's/^[[:space:]]*version[[:space:]]+"([^"]+)".*/\1/p' Casks/kde-connect.rb | tail -1)"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Casks/kde-connect.rb
+          git commit -m "Update KDE Connect nightly to ${version}"
+          git push
