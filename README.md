@@ -1,11 +1,11 @@
-# KDE Connect Intel Nightly Homebrew Tap
+# KDE Connect macOS Intel Nightly Homebrew Tap
 
 Homebrew tap for the official KDE Connect macOS Intel nightly builds.
 
 The upstream Homebrew Cask currently packages the stable macOS build of KDE
-Connect, which is ARM-only. KDE also publishes untested nightly builds for Intel
-macOS. This tap exists to make those Intel nightly builds installable through a
-normal Homebrew tap while keeping update checks conservative.
+Connect, which is ARM-only. KDE also publishes untested macOS Intel nightly
+builds. This tap exists to make those macOS Intel nightly builds installable
+through a normal Homebrew tap while keeping update checks conservative.
 
 This project is not affiliated with KDE or Homebrew.
 
@@ -15,12 +15,12 @@ KDE Connect publishes:
 
 - a stable macOS release for Apple Silicon,
 - nightly macOS builds for Apple Silicon,
-- nightly macOS builds for Intel.
+- macOS Intel nightly builds.
 
 The stable Intel URL for the current KDE Connect macOS release does not exist,
 so the official Homebrew Cask cannot safely add an Intel variant until KDE
-publishes a stable Intel artifact. This tap tracks the Intel nightly channel
-instead.
+publishes a stable Intel artifact. This tap tracks the macOS Intel nightly
+channel instead.
 
 ## Install
 
@@ -55,7 +55,7 @@ brew pin kde-connect
 
 The scheduled GitHub Actions workflow runs on a macOS runner and:
 
-1. Reads the KDE Connect Intel nightly directory.
+1. Reads the KDE Connect macOS Intel nightly directory.
 2. Extracts the newest build number with a regex.
 3. Compares that build number with `Casks/kde-connect.rb`.
 4. Exits without downloading anything when the cask is already current.
@@ -79,7 +79,7 @@ that commit step.
 
 ## Public Tap Safety Notes
 
-The repository is public so other Intel Mac users can use the tap without
+The repository is public so other Intel Mac users can use the macOS nightly tap without
 personal access tokens.
 
 The update workflow is intentionally narrow:
@@ -90,11 +90,15 @@ The update workflow is intentionally narrow:
 - it writes only `Casks/kde-connect.rb`,
 - it validates the macOS DMG on a macOS runner before committing.
 
+Cloning or viewing this public repository does not expose the repository
+owner's token. GitHub creates the workflow `GITHUB_TOKEN` only at run time, and
+that token is scoped to this repository.
+
 ## Limitations
 
-KDE labels the nightly builds as untested. This tap validates that the published
-DMG is mountable and contains an Intel binary, but it cannot guarantee runtime
-stability of KDE Connect itself.
+KDE labels the macOS nightly builds as untested. This tap validates that the
+published DMG is mountable and contains an Intel binary, but it cannot guarantee
+runtime stability of KDE Connect itself.
 
 When KDE publishes a stable Intel macOS build, the better long-term solution is
 to update the official `homebrew/cask` `kde-connect` cask.

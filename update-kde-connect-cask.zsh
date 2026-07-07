@@ -70,7 +70,7 @@ latest_build="$(
 )"
 
 if [[ -z "$latest_build" ]]; then
-  print -u2 "Could not find a KDE Connect Intel nightly build in $base_url"
+  print -u2 "Could not find a KDE Connect macOS Intel nightly build in $base_url"
   exit 69
 fi
 
@@ -83,7 +83,7 @@ if [[ -f "$cask_file" ]]; then
 fi
 
 if [[ -n "$current_build" && "$latest_build" -le "$current_build" ]]; then
-  print "KDE Connect Intel nightly is already current in the cask."
+  print "KDE Connect macOS Intel nightly is already current in the cask."
   print "Current cask build: $current_build"
   print "Latest KDE build: $latest_build"
   exit 0
@@ -93,7 +93,7 @@ artifact_name="kdeconnect-kde-master-${latest_build}-macos-clang-x86_64.dmg"
 artifact_url="${base_url}${artifact_name}"
 artifact_file="$work_dir/$artifact_name"
 
-print "Found KDE Connect Intel nightly build $latest_build"
+print "Found KDE Connect macOS Intel nightly build $latest_build"
 if [[ -n "$current_build" ]]; then
   print "Current cask build is $current_build; validating newer build $latest_build"
 else
@@ -174,6 +174,11 @@ cask "kde-connect" do
     "~/Library/Preferences/org.kde.kdeconnect.plist",
     "~/Library/Preferences/State/kdeconnect.appstaterc",
   ]
+
+  caveats <<~EOS
+    This cask tracks KDE Connect macOS Intel nightly builds. KDE labels these
+    nightly builds as untested.
+  EOS
 end
 CASK
 

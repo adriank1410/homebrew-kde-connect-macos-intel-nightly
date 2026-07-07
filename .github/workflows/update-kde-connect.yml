@@ -1,4 +1,4 @@
-name: Update KDE Connect nightly
+name: Update KDE Connect macOS Intel nightly
 
 on:
   workflow_dispatch:
@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: kde-connect-nightly-update
+  group: kde-connect-macos-intel-nightly-update
   cancel-in-progress: false
 
 jobs:
@@ -31,7 +31,7 @@ jobs:
           fi
           ln -sfn "$GITHUB_WORKSPACE" "$tap_link"
 
-      - name: Update cask from KDE nightly
+      - name: Update cask from KDE macOS Intel nightly
         id: update
         run: ./update-kde-connect-cask.zsh "$GITHUB_WORKSPACE"
 
@@ -63,5 +63,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add Casks/kde-connect.rb
-          git commit -m "Update KDE Connect nightly to ${version}"
+          git commit -m "Update KDE Connect macOS Intel nightly to ${version}"
           git push

@@ -28,4 +28,9 @@ cask "kde-connect" do
     "~/Library/Preferences/org.kde.kdeconnect.plist",
     "~/Library/Preferences/State/kdeconnect.appstaterc",
   ]
+
+  caveats <<~EOS
+    This cask tracks KDE Connect macOS Intel nightly builds. KDE labels these
+    nightly builds as untested.
+  EOS
 end
