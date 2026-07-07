@@ -11,11 +11,14 @@ This project is not affiliated with KDE or Homebrew.
 
 ## Motivation
 
-KDE Connect publishes:
+For macOS specifically, KDE Connect publishes:
 
 - a stable macOS release for Apple Silicon,
 - nightly macOS builds for Apple Silicon,
 - macOS Intel nightly builds.
+
+KDE Connect is also available on other platforms, including Windows, but this
+tap only concerns the macOS Intel nightly channel.
 
 The stable Intel URL for the current KDE Connect macOS release does not exist,
 so the official Homebrew Cask cannot safely add an Intel variant until KDE
