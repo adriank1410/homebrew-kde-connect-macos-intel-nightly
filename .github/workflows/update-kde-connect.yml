@@ -3,7 +3,8 @@ name: Update KDE Connect macOS Intel nightly
 on:
   workflow_dispatch:
   schedule:
-    - cron: "23 4 * * *"
+    - cron: "23 */3 * * *"
+      timezone: "Europe/Warsaw"
 
 permissions:
   contents: write
