@@ -56,7 +56,8 @@ brew pin kde-connect
 
 ## How Updates Work
 
-The scheduled GitHub Actions workflow runs on a macOS runner and:
+The scheduled GitHub Actions workflow runs every 30 minutes on a macOS runner
+and:
 
 1. Reads the KDE Connect macOS Intel nightly directory.
 2. Extracts the newest build number with a regex.
@@ -71,7 +72,11 @@ The scheduled GitHub Actions workflow runs on a macOS runner and:
 10. Runs `brew style`, `brew audit`, and `brew livecheck`.
 11. Commits the cask update only after validation passes.
 
-The workflow runs daily and can also be started manually from GitHub Actions.
+The workflow can also be started manually from GitHub Actions. KDE's Intel
+nightly directory retains only the current build, so this polling interval
+reduces the window in which a cask can point at a retired artifact. GitHub
+Actions scheduling and the upstream CDN are outside this tap's control, so a
+brief 404 remains possible during an upstream build transition.
 
 ## Why Not Only `livecheck`?
 
