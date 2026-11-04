@@ -14,6 +14,21 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # GitHub disables scheduled workflows after 60 days without repository
+  # activity. KDE can go longer than that without a new Intel build, so no
+  # update commit happens. Re-enabling the workflow through the API resets
+  # that inactivity timer without adding commits.
+  keepalive:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - name: Keep scheduled workflow enabled
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api --method PUT "repos/${GITHUB_REPOSITORY}/actions/workflows/update-kde-connect.yml/enable"
+
   update:
     runs-on: macos-latest
     steps:
