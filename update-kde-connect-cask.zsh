@@ -101,9 +101,13 @@ else
 fi
 curl -fL --retry 3 --output "$artifact_file" "$artifact_url"
 
+# HTTP/1.1 sends "Content-Length", HTTP/2 sends "content-length". macOS awk has
+# no IGNORECASE, so compare a lowercased field name. With redirects the header
+# file holds one block per response; the last Content-Length is the artifact's.
+headers_file="$work_dir/headers.txt"
+curl -fsSIL --retry 3 --output "$headers_file" "$artifact_url"
 expected_length="$(
-  curl -fsSI "$artifact_url" |
-    awk 'BEGIN { IGNORECASE = 1 } /^content-length:/ { gsub(/\r/, "", $2); print $2; exit }'
+  awk 'tolower($1) == "content-length:" { gsub(/\r/, "", $2); header_value = $2 } END { print header_value }' "$headers_file"
 )"
 actual_length="$(stat -f "%z" "$artifact_file")"
 
