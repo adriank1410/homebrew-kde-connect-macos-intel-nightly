@@ -1,15 +1,15 @@
 cask "kde-connect" do
-  version "6589"
-  sha256 "7a9319a9e1426321b7cc4fe155467a34e698a9766f62fb8c5d1a1387e55bdb19"
+  version "6891"
+  sha256 "c96a4915fc0d51ee53bd11e8c900a6d94ed9aba404765a8006ce1e82ffe2c33d"
 
-  url "https://origin.cdn.kde.org/ci-builds/network/kdeconnect-kde/master/macos-x86_64/kdeconnect-kde-master-#{version}-macos-clang-x86_64.dmg"
+  url "https://origin.cdn.kde.org/ci-builds/network/kdeconnect-kde/release-26.08/macos-x86_64/kdeconnect-kde-release_26.08-#{version}-macos-clang-x86_64.dmg"
   name "KDE Connect"
-  desc "Nightly build of the multi-platform device integration app"
+  desc "CI build of the multi-platform device integration app"
   homepage "https://kdeconnect.kde.org/"
 
   livecheck do
-    url "https://origin.cdn.kde.org/ci-builds/network/kdeconnect-kde/master/macos-x86_64/"
-    regex(/href=.*?kdeconnect-kde-master-(\d+)-macos-clang-x86_64\.dmg/i)
+    url "https://origin.cdn.kde.org/ci-builds/network/kdeconnect-kde/release-26.08/macos-x86_64/"
+    regex(/href=.*?kdeconnect-kde-release_26\.08-(\d+)-macos-clang-x86_64\.dmg/i)
   end
 
   depends_on macos: :ventura, arch: :x86_64
@@ -30,7 +30,8 @@ cask "kde-connect" do
   ]
 
   caveats <<~EOS
-    This cask tracks KDE Connect macOS Intel nightly builds. KDE labels these
-    nightly builds as untested.
+    This cask tracks KDE's CI builds of KDE Connect for macOS Intel: the newest
+    of the master nightly and the latest release branch. KDE labels these
+    builds as untested.
   EOS
 end
