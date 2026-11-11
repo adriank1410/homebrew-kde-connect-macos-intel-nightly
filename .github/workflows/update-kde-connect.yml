@@ -72,6 +72,9 @@ jobs:
         if: steps.diff.outputs.updated == 'true'
         run: |
           set -euo pipefail
+          # Homebrew refuses to load a cask from a tap it was not told to trust,
+          # so audit and livecheck fail without this.
+          brew trust adriank1410/kde-connect-macos-intel-nightly
           HOMEBREW_NO_INSTALL_FROM_API=1 brew style --cask adriank1410/kde-connect-macos-intel-nightly/kde-connect
           HOMEBREW_NO_INSTALL_FROM_API=1 brew audit --cask --new --strict adriank1410/kde-connect-macos-intel-nightly/kde-connect
           HOMEBREW_NO_INSTALL_FROM_API=1 brew livecheck --cask adriank1410/kde-connect-macos-intel-nightly/kde-connect --json
