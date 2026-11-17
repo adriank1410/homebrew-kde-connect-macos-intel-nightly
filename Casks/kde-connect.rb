@@ -1,15 +1,15 @@
 cask "kde-connect" do
-  version "6891"
-  sha256 "c96a4915fc0d51ee53bd11e8c900a6d94ed9aba404765a8006ce1e82ffe2c33d"
+  version "6981"
+  sha256 "73c324327d1fbc4a04f1bc6c4c36e486880856674db8130e6cec672387ba5f1b"
 
-  url "https://origin.cdn.kde.org/ci-builds/network/kdeconnect-kde/release-26.08/macos-x86_64/kdeconnect-kde-release_26.08-#{version}-macos-clang-x86_64.dmg"
+  url "https://origin.cdn.kde.org/ci-builds/network/kdeconnect-kde/release-26.12/macos-x86_64/kdeconnect-kde-release_26.12-#{version}-macos-clang-x86_64.dmg"
   name "KDE Connect"
   desc "CI build of the multi-platform device integration app"
   homepage "https://kdeconnect.kde.org/"
 
   livecheck do
-    url "https://origin.cdn.kde.org/ci-builds/network/kdeconnect-kde/release-26.08/macos-x86_64/"
-    regex(/href=.*?kdeconnect-kde-release_26\.08-(\d+)-macos-clang-x86_64\.dmg/i)
+    url "https://origin.cdn.kde.org/ci-builds/network/kdeconnect-kde/release-26.12/macos-x86_64/"
+    regex(/href=.*?kdeconnect-kde-release_26\.12-(\d+)-macos-clang-x86_64\.dmg/i)
   end
 
   depends_on macos: :ventura, arch: :x86_64
